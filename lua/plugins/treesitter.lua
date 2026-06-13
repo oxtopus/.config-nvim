@@ -1,15 +1,11 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
+    branch = "main",
+    lazy = false,
     build = ":TSUpdate",
-    event = { "BufReadPre", "BufNewFile" },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-    },
-    main = "nvim-treesitter.configs",
-    opts = {
-      ensure_installed = {
+    config = function()
+      require("nvim-treesitter").install({
         "python",
         "javascript",
         "typescript",
@@ -28,31 +24,33 @@ return {
         "vimdoc",
         "regex",
         "query",
-      },
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<CR>",
-          node_incremental = "<CR>",
-          scope_incremental = "<TAB>",
-          node_decremental = "<S-TAB>",
-        },
-      },
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true,
-          keymaps = {
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-          },
-        },
-      },
-    },
+      })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          local lang = vim.treesitter.language.get_lang(args.match) or args.match
+          if pcall(vim.treesitter.language.add, lang) then
+            pcall(vim.treesitter.start, args.buf, lang)
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    config = function()
+      require("nvim-treesitter-textobjects").setup({
+        select = { lookahead = true },
+      })
+
+      local select_to = require("nvim-treesitter-textobjects.select").select_textobject
+      vim.keymap.set({ "x", "o" }, "af", function() select_to("@function.outer", "textobjects") end, { desc = "around function" })
+      vim.keymap.set({ "x", "o" }, "if", function() select_to("@function.inner", "textobjects") end, { desc = "inner function" })
+      vim.keymap.set({ "x", "o" }, "ac", function() select_to("@class.outer", "textobjects") end, { desc = "around class" })
+      vim.keymap.set({ "x", "o" }, "ic", function() select_to("@class.inner", "textobjects") end, { desc = "inner class" })
+    end,
   },
 }

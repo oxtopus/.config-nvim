@@ -20,6 +20,19 @@ return {
           hide_dotfiles = false,
           hide_gitignored = true,
         },
+        follow_current_file = { enabled = true },
+      },
+      default_component_configs = {
+        modified = { symbol = "[+]" },
+        git_status = { symbols = { added = "", deleted = "", modified = "", renamed = "", untracked = "", ignored = "", unstaged = "", staged = "" } },
+      },
+      event_handlers = {
+        {
+          event = "file_opened",
+          handler = function()
+            require("neo-tree.command").execute({ action = "close" })
+          end,
+        },
       },
     },
   },

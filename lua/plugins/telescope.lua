@@ -11,6 +11,10 @@ return {
           return vim.fn.executable("make") == 1
         end,
       },
+      {
+        "nvim-telescope/telescope-file-browser.nvim",
+        dependencies = { "nvim-telescope/telescope.nvim" },
+      },
     },
     keys = {
       { "<leader>ff", "<cmd>Telescope find_files<CR>",       desc = "Find files" },
@@ -22,6 +26,7 @@ return {
       { "<leader>fS", "<cmd>Telescope lsp_workspace_symbols<CR>", desc = "Workspace symbols" },
       { "<leader>f:", "<cmd>Telescope commands<CR>",         desc = "Commands" },
       { "<leader>fk", "<cmd>Telescope keymaps<CR>",          desc = "Keymaps" },
+      { "<leader>fd", "<cmd>Telescope file_browser<CR>",     desc = "File browser" },
     },
     opts = {
       defaults = {
@@ -43,9 +48,10 @@ return {
         buffers = { sort_mru = true },
       },
     },
-    config = function(_, opts)
-      require("telescope").setup(opts)
-      pcall(require("telescope").load_extension, "fzf")
-    end,
+      config = function(_, opts)
+        require("telescope").setup(opts)
+        pcall(require("telescope").load_extension, "fzf")
+        pcall(require("telescope").load_extension, "file_browser")
+      end,
   },
 }

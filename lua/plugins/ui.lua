@@ -42,4 +42,29 @@ return {
     event = "VeryLazy",
     opts = {},
   },
+
+  {
+    "akinsho/bufferline.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      options = {
+        mode = "buffers",
+        diagnostics = "nvim_lsp",
+        show_buffer_close_icons = false,
+        show_close_icon = false,
+        offsets = {
+          { filetype = "neo-tree", text = "File Explorer", highlight = "Directory", text_align = "left" },
+        },
+      },
+    },
+    keys = {
+      { "<S-h>", "<cmd>BufferLineCyclePrev<CR>", desc = "Prev buffer" },
+      { "<S-l>", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+      { "[b", "<cmd>BufferLineCyclePrev<CR>", desc = "Prev buffer" },
+      { "]b", "<cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+      { "<leader>bp", "<cmd>BufferLineTogglePin<CR>", desc = "Pin buffer" },
+      { "<leader>bP", "<cmd>BufferLineGroupClose ungrouped<CR>", desc = "Close unpinned" },
+    },
+  },
 }
