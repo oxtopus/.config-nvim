@@ -11,10 +11,10 @@
 │   │   ├── keymaps.lua             # Leader key, window nav, Telescope binds
 │   │   └── lazy.lua                # lazy.nvim bootstrap + plugin import
 │   └── plugins/
-│       ├── ui.lua                  # tokyonight, lualine, which-key
+│       ├── ui.lua                  # tokyonight, lualine, which-key, bufferline
 │       ├── lsp.lua                 # Mason + mason-lspconfig + nvim-lspconfig + blink.cmp
-│       ├── treesitter.lua          # nvim-treesitter (17 parsers)
-│       ├── telescope.lua           # Telescope + fzf-native
+│       ├── treesitter.lua          # nvim-treesitter (18 parsers) + treesitter-textobjects
+│       ├── telescope.lua           # Telescope + fzf-native + file-browser
 │       ├── neo-tree.lua            # File tree sidebar
 │       ├── formatting.lua          # conform.nvim (auto-format on save)
 │       ├── linting.lua             # nvim-lint (auto-lint on save/write)
@@ -27,8 +27,9 @@
 - Bootstrapped on first launch from GitHub (stable branch)
 - Plugins imported via `{ import = "plugins" }` — each plugin file in `lua/plugins/` returns a spec table
 - `defaults = { lazy = true }` — all plugins lazy-load unless `lazy = false`
-- `checker = { enabled = true }` — checks for updates (no notification)
+- `checker = { enabled = true, notify = false }` — checks for updates silently
 - `install.colorscheme = { "tokyonight" }` — ensures colorscheme loads first
+- `ui = { border = "rounded" }`
 
 ## Architecture Patterns
 
@@ -138,11 +139,22 @@ keys = {
 1. Install linter binary (Mason or system)
 2. Add entry to `linters_by_ft` in `linting.lua`
 
-## Treesitter Parsers
+## Treesitter
 
-Installed: python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile, json, yaml, bash, markdown, markdown_inline, html, css, vimdoc, regex, query
+### Parsers (18)
 
-`auto_install = true` — missing parsers installed automatically when opening matching filetype.
+python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile, json, yaml, bash, markdown, markdown_inline, html, css, vimdoc, regex, query
+
+### Parser installation
+
+A `FileType` autocmd calls `pcall(vim.treesitter.language.add, lang)` for the current filetype, attempting to auto-install missing parsers on-the-fly.
+
+### Textobjects (treesitter-textobjects)
+
+| Key | Action |
+|-----|--------|
+| `af` / `if` | Around / inner function |
+| `ac` / `ic` | Around / inner class |
 
 ## Keymaps Reference
 
@@ -162,6 +174,10 @@ Installed: python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile,
 | `<leader>fS` | `Telescope lsp_workspace_symbols` | telescope |
 | `<leader>f:` | `Telescope commands` | telescope |
 | `<leader>fk` | `Telescope keymaps` | telescope |
+| `<leader>fd` | `Telescope file_browser` | telescope |
+| `<leader>cd` | `Telescope file_browser` from current file path | telescope |
+| `<leader>cD` | Cd to current file directory | built-in |
+| `<leader>cu` | Cd to parent directory | built-in |
 | `<leader>e` | Neotree toggle | neo-tree |
 | `<leader>w` | Write (save) | built-in |
 | `<leader>q` | Quit | built-in |
@@ -174,6 +190,12 @@ Installed: python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile,
 | `<C-j>` | Move to window below |
 | `<C-k>` | Move to window above |
 | `<C-l>` | Move to right window |
+| `<S-h>` | Previous buffer |
+| `<S-l>` | Next buffer |
+| `[b` | Previous buffer |
+| `]b` | Next buffer |
+| `<leader>bp` | Pin buffer |
+| `<leader>bP` | Close unpinned buffers |
 
 ### LSP
 | Key | Action |
@@ -221,6 +243,8 @@ Installed: python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile,
 | `K` (visual) | Move selection up |
 | `<C-d>` | Half-page down, centered |
 | `<C-u>` | Half-page up, centered |
+| `n` / `N` | Next / prev search result, centered |
+| `<leader>n` | Toggle relative/absolute line numbers |
 
 ## Vim Options (options.lua)
 
@@ -234,10 +258,19 @@ Installed: python, javascript, typescript, tsx, lua, hcl, terraform, dockerfile,
 | expandtab | true | Spaces instead of tabs |
 | shiftwidth | 2 | Indent width |
 | tabstop | 2 | Tab display width |
+| softtabstop | 2 | Soft tab stop |
+| smartindent | true | Smart auto-indent |
 | wrap | false | No line wrapping |
 | scrolloff | 8 | Keep cursor 8 lines from edge |
+| splitbelow | true | New splits open below |
+| splitright | true | New vsplits open right |
+| ignorecase | true | Case-insensitive search |
+| smartcase | true | Override ignorecase when uppercase used |
+| hlsearch | false | Don't highlight search matches |
+| incsearch | true | Incremental search |
 | termguicolors | true | 24-bit color |
 | signcolumn | yes | Always show sign column (avoids layout shift) |
+| cursorline | true | Highlight current line |
 | colorcolumn | 120 | Ruler at column 120 |
 | updatetime | 250 | Faster CursorHold (for git blame, diagnostics) |
 | timeoutlen | 400 | Faster which-key popup |
