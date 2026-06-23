@@ -23,6 +23,7 @@ return {
         "yamlls",
         "bashls",
         "marksman",
+        "gopls",
       },
     },
   },
@@ -74,6 +75,31 @@ return {
         yamlls = {},
         bashls = {},
         marksman = {},
+        gopls = {
+          settings = {
+            gopls = {
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+                nilness = true,
+                unusedwrite = true,
+                useany = true,
+              },
+              staticcheck = true,
+              gofumpt = true,
+              usePlaceholders = true,
+              completeUnimported = true,
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+            },
+          },
+        },
       }
 
       local mason_lspconfig = require("mason-lspconfig")

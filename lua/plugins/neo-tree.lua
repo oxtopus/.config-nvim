@@ -9,7 +9,18 @@ return {
       "MunifTanjim/nui.nvim",
     },
     keys = {
-      { "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Toggle file tree" },
+      {
+        "<leader>e",
+        function()
+          -- Skip reveal for non-file buffers (checkhealth, help, terminal, etc.)
+          if vim.bo.buftype ~= "" then
+            vim.cmd("Neotree toggle")
+          else
+            vim.cmd("Neotree toggle reveal")
+          end
+        end,
+        desc = "Toggle file tree",
+      },
     },
     opts = {
       close_if_last_window = true,

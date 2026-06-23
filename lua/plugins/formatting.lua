@@ -29,6 +29,7 @@ return {
         hcl = { "terraform_fmt" },
         terraform = { "terraform_fmt" },
         tf = { "terraform_fmt" },
+        go = { "goimports", "gofumpt" },
       },
       format_on_save = function(bufnr)
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then

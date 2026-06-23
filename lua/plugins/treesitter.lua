@@ -24,6 +24,10 @@ return {
         "vimdoc",
         "regex",
         "query",
+        "go",
+        "gomod",
+        "gosum",
+        "gowork",
       })
 
       vim.api.nvim_create_autocmd("FileType", {
