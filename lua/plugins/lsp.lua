@@ -54,11 +54,44 @@ return {
           vim.lsp.buf.format({ async = true })
         end, "Format buffer")
         map("v", "<leader>ca", vim.lsp.buf.code_action, "Code actions")
+
+        -- Organize imports on save for TypeScript files
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          buffer = bufnr,
+          callback = function()
+            local clients = vim.lsp.get_clients({ bufnr = bufnr, name = "ts_ls" })
+            if #clients > 0 then
+              vim.lsp.buf.code_action({
+                context = { only = { "source.organizeImports" } },
+                apply = true,
+              })
+            end
+          end,
+        })
       end
 
       local servers = {
         pyright = {},
-        ts_ls = {},
+        ts_ls = {
+          settings = {
+            completions = {
+              completeFunctionCalls = true,
+            },
+            preferences = {
+              includeInlayParameterNameHints = "all",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayFunctionLikeReturnTypeHints = true,
+              includeInlayVariableTypeHints = true,
+              includeInlayPropertyDeclarationTypeHints = true,
+              includeInlayEnumMemberValueHints = true,
+              includeCompletionsForModuleExports = true,
+              includeCompletionsForImportStatements = true,
+              includeCompletionsWithClassMemberSnippets = true,
+              includeCompletionsWithInsertText = true,
+              importModuleSpecifierPreference = "non-relative",
+            },
+          },
+        },
         terraformls = {},
         dockerls = {},
         lua_ls = {
